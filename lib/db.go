@@ -13,7 +13,6 @@ func Conn() *pgx.Conn {
 	err := godotenv.Load()
 	if err != nil {
 		fmt.Println("Cannot read .env file")
-		os.Exit(1)
 	}
 
 	connStr := os.Getenv("DATABASE_URL")
