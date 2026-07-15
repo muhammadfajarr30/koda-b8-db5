@@ -90,10 +90,10 @@ func main() {
 	for {
 		utils.Clear()
 		fmt.Println("====== CONTACT LIST ======")
-		fmt.Println("1. Lihat Semua Kontak")
-		fmt.Println("2. Tambah Kontak")
+		fmt.Println("1. List Contact")
+		fmt.Println("2. Add Contact")
 		fmt.Println("3. Edit Contact")
-		fmt.Println("4. Hapus Contact")
+		fmt.Println("4. Delete Contact")
 		fmt.Println("--------------------------")
 		fmt.Println("0. Keluar")
 		fmt.Print("pilih: ")
