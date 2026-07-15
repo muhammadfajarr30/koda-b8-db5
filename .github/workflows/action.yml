@@ -24,11 +24,11 @@ jobs:
         - name: install go deps
           run: go mod tidy
         - name: build app Linux64
-          run: go build -o auth-linux-x64 cmd/main.go
+          run: go build -o auth-linux-x64 main.go
         - name: build app Windows
-          run: GOOS=windows GOARCH=amd64 go build -o auth-windows.exe cmd/main.go
+          run: GOOS=windows GOARCH=amd64 go build -o auth-windows.exe main.go
         - name: build app MacOS ARM64
-          run: GOOS=darwin GOARCH=arm64 go build -o auth-darwin-arm64 cmd/main.go
+          run: GOOS=darwin GOARCH=arm64 go build -o auth-darwin-arm64 main.go
         - name: Release
           uses: softprops/action-gh-release@v3
           with:
