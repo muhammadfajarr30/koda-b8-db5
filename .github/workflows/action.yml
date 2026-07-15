@@ -1,0 +1,54 @@
+name: Automation Build Image 
+run-name: ${{github.event.head_commit.message}}
+
+on: 
+  push: 
+     tags: 
+        - 'v*'
+
+permissions: 
+  contents: write
+  packages: write
+
+jobs: 
+  release-app:
+      name: "Release builded"
+      runs-on: ubuntu-latest
+      steps:
+        - name: get source
+          uses: actions/checkout@v6
+        - name: setup golang
+          uses: actions/setup-go@v6
+          with:
+            go-version-file: go.mod
+        - name: install go deps
+          run: go mod tidy
+        - name: build app Linux64
+          run: go build -o auth-linux-x64 cmd/main.go
+        - name: build app Windows
+          run: GOOS=windows GOARCH=amd64 go build -o auth-windows.exe cmd/main.go
+        - name: build app MacOS ARM64
+          run: GOOS=darwin GOARCH=arm64 go build -o auth-darwin-arm64 cmd/main.go
+        - name: Release
+          uses: softprops/action-gh-release@v3
+          with:
+            files: |
+              auth-linux-x64
+              auth-windows.exe
+              auth-darwin-arm64
+              
+  build-docker-image:
+      name: "Build Docker Image"
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+  
+        - name: Login ghcr.io
+          run: echo -n ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+  
+        - name: Build Docker image
+          run: docker build . -t ghcr.io/${{github.repository}}:latest
+  
+        - name: Push to ghcr.io
+          run: docker push ghcr.io/${{github.repository}}:latest
