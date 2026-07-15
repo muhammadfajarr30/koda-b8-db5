@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -19,6 +20,25 @@ func AddContact(data Contact, conn *pgx.Conn) error {
 	_, err := conn.Exec(context.Background(), `INSERT INTO contacts (email, phone) VALUES ($1, $2)`, data.Email, data.Phone)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func DeleteContact(id int, conn *pgx.Conn) error {
+	commandTag, err := conn.Exec(context.Background(), `DELETE from contacts WHERE id=$1`, id)
+	if commandTag.RowsAffected() != 1 {
+		return err
+	}
+	return nil
+}
+
+func UpdateContact(data Contact, conn *pgx.Conn) error {
+	commandTag, err := conn.Exec(context.Background(), `UPDATE contacts SET email=$1, phone=$2 WHERE id=$3`, data.Email, data.Phone, data.Id)
+	if err != nil {
+		return err
+	}
+	if commandTag.RowsAffected() != 1 {
+		return errors.New("no row found to update")
 	}
 	return nil
 }
